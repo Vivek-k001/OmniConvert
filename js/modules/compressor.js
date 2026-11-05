@@ -1,11 +1,11 @@
 /**
  * OmniConvert Core Module: Image Compressor & Format Converter
- * Client-side compression using HTML5 Canvas & Blob conversion
+ * Accurate byte difference calculation and format handling
  */
 
 class ImageCompressor {
   constructor() {
-    this.items = []; // { id, file, originalSize, compressedBlob, compressedSize, dataUrl, previewUrl, originalImg, width, height }
+    this.items = [];
     this.initElements();
     this.initEventListeners();
   }
@@ -22,6 +22,7 @@ class ImageCompressor {
     this.qualityVal = document.getElementById('compress-quality-val');
     this.formatSelect = document.getElementById('compress-format');
     this.maxDimInput = document.getElementById('compress-max-dim');
+    this.formatHint = document.getElementById('compress-format-hint');
   }
 
   initEventListeners() {
@@ -59,7 +60,19 @@ class ImageCompressor {
       this.recompressAll();
     });
 
-    this.formatSelect.addEventListener('change', () => this.recompressAll());
+    this.formatSelect.addEventListener('change', () => {
+      const fmt = this.formatSelect.value;
+      if (this.formatHint) {
+        if (fmt === 'image/png') {
+          this.formatHint.textContent = 'ℹ️ Note: PNG is uncompressed/lossless. Re-encoding compressed WebP/JPG to PNG often increases file size.';
+          this.formatHint.classList.remove('hidden');
+        } else {
+          this.formatHint.classList.add('hidden');
+        }
+      }
+      this.recompressAll();
+    });
+
     this.maxDimInput.addEventListener('change', () => this.recompressAll());
     this.clearBtn.addEventListener('click', () => this.clearAll());
     this.downloadAllBtn.addEventListener('click', () => this.downloadAll());
@@ -74,7 +87,7 @@ class ImageCompressor {
         this.items.push(item);
         await this.compressItem(item);
       } catch (err) {
-        console.error('Failed to load file for compressor:', err);
+        console.error('Compressor file load error:', err);
       }
     }
 
@@ -98,7 +111,7 @@ class ImageCompressor {
             previewUrl: e.target.result,
             compressedBlob: null,
             compressedSize: 0,
-            savings: 0
+            percentChange: 0
           });
         };
         img.onerror = reject;
@@ -111,7 +124,7 @@ class ImageCompressor {
 
   async compressItem(item) {
     const quality = parseFloat(this.qualitySlider.value) / 100;
-    const format = this.formatSelect.value; // 'image/webp', 'image/jpeg', 'image/png'
+    const format = this.formatSelect.value;
     const maxDimension = parseInt(this.maxDimInput.value, 10) || 0;
 
     let targetWidth = item.width;
@@ -132,7 +145,6 @@ class ImageCompressor {
     canvas.height = targetHeight;
     const ctx = canvas.getContext('2d');
 
-    // Fill white background for JPEG if transparency
     if (format === 'image/jpeg') {
       ctx.fillStyle = '#ffffff';
       ctx.fillRect(0, 0, targetWidth, targetHeight);
@@ -144,7 +156,12 @@ class ImageCompressor {
       canvas.toBlob((blob) => {
         item.compressedBlob = blob;
         item.compressedSize = blob.size;
-        item.savings = (((item.originalSize - blob.size) / item.originalSize) * 100).toFixed(1);
+        
+        // Exact mathematical calculation:
+        // Negative delta means file got smaller (saved)
+        // Positive delta means file got larger
+        const delta = ((blob.size - item.originalSize) / item.originalSize) * 100;
+        item.percentChange = delta;
         item.newWidth = targetWidth;
         item.newHeight = targetHeight;
         resolve();
@@ -186,33 +203,36 @@ class ImageCompressor {
       totalCompressed += item.compressedSize;
 
       const card = document.createElement('div');
-      card.className = 'glass-card rounded-xl p-3 flex flex-col justify-between border border-slate-700/60';
+      card.className = 'surface-elevated rounded-xl p-3 flex flex-col justify-between border border-white/5 hover:border-white/15 transition-all';
       
-      const isSaved = item.compressedSize < item.originalSize;
-      const savingsBadge = isSaved 
-        ? `<span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded text-xs font-semibold">-${item.savings}%</span>`
-        : `<span class="bg-amber-500/20 text-amber-300 border border-amber-500/30 px-2 py-0.5 rounded text-xs font-semibold">+${Math.abs(item.savings)}%</span>`;
+      const isSmaller = item.compressedSize < item.originalSize;
+      const absPercent = Math.abs(item.percentChange).toFixed(1);
+      
+      // Clear visual distinction: Green for reduction, Amber for increase
+      const badge = isSmaller
+        ? `<span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded text-[11px] font-mono font-medium">-${absPercent}%</span>`
+        : `<span class="bg-amber-500/10 text-amber-300 border border-amber-500/20 px-2 py-0.5 rounded text-[11px] font-mono font-medium">+${absPercent}%</span>`;
 
       card.innerHTML = `
         <div>
-          <div class="relative w-full h-36 bg-slate-950/60 rounded-lg overflow-hidden flex items-center justify-center border border-white/5">
+          <div class="relative w-full h-36 bg-[#090b0e] rounded-lg overflow-hidden flex items-center justify-center border border-white/5">
             <img src="${item.previewUrl}" alt="${item.name}" class="max-w-full max-h-full object-contain pointer-events-none" />
             <div class="absolute top-2 right-2">
-              ${savingsBadge}
+              ${badge}
             </div>
           </div>
           <div class="mt-2.5">
             <p class="text-xs font-medium text-slate-200 truncate" title="${item.name}">${item.name}</p>
             <div class="mt-1 flex items-center justify-between text-[11px] text-slate-400 font-mono">
               <span>${this.formatBytes(item.originalSize)}</span>
-              <span>→</span>
-              <span class="font-semibold text-indigo-300">${this.formatBytes(item.compressedSize)}</span>
+              <span class="text-slate-600">→</span>
+              <span class="${isSmaller ? 'text-emerald-400 font-medium' : 'text-amber-300 font-medium'}">${this.formatBytes(item.compressedSize)}</span>
             </div>
           </div>
         </div>
 
-        <div class="mt-3 pt-2 border-t border-white/5 flex items-center justify-between gap-2">
-          <button type="button" class="btn-download-one flex-1 py-1.5 px-3 rounded-lg bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-200 text-xs font-medium border border-indigo-500/30 flex items-center justify-center gap-1.5 transition">
+        <div class="mt-3 pt-2.5 border-t border-white/5 flex items-center justify-between gap-2">
+          <button type="button" class="btn-download-one flex-1 py-1.5 px-3 rounded-lg bg-white text-black hover:bg-slate-200 text-xs font-medium flex items-center justify-center gap-1.5 transition">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
             Save
           </button>
@@ -231,16 +251,16 @@ class ImageCompressor {
       this.previewContainer.appendChild(card);
     });
 
-    // Update total stats in summary bar
     const statsEl = document.getElementById('compress-total-stats');
     if (statsEl) {
       const netSavings = (((totalOriginal - totalCompressed) / totalOriginal) * 100).toFixed(1);
+      const isSaved = totalCompressed <= totalOriginal;
       statsEl.innerHTML = `
-        <span class="text-slate-300">Total:</span> 
-        <span class="text-slate-400">${this.formatBytes(totalOriginal)}</span> 
-        <span class="text-slate-400">→</span> 
-        <span class="text-indigo-300 font-semibold">${this.formatBytes(totalCompressed)}</span>
-        <span class="text-emerald-400 font-semibold">(${netSavings}% saved)</span>
+        <span class="text-slate-400">Total:</span> 
+        <span class="text-slate-300 font-mono">${this.formatBytes(totalOriginal)}</span> 
+        <span class="text-slate-600">→</span> 
+        <span class="font-mono ${isSaved ? 'text-emerald-400 font-medium' : 'text-amber-300 font-medium'}">${this.formatBytes(totalCompressed)}</span>
+        <span class="font-mono text-[11px] ${isSaved ? 'text-emerald-400' : 'text-amber-300'}">(${isSaved ? '-' + netSavings : '+' + Math.abs(netSavings)}%)</span>
       `;
     }
   }
