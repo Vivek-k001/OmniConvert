@@ -1,450 +1,227 @@
 <!DOCTYPE html>
 <html lang="en" class="dark">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>OmniConvert — In-Browser Media & File Converter</title>
-  <meta name="description" content="Minimal, privacy-first file utilities running 100% inside your browser. No server uploads." />
+  <title>OmniConvert — In-Browser Media & File Suite</title>
+  <meta name="description"
+    content="Clean, private file conversion utilities running 100% in your browser. No server uploads." />
 
-  <!-- Favicon -->
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ffffff'><path d='M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14l-5-5 1.41-1.41L12 14.17l5.59-5.59L19 10l-7 7z'/></svg>" />
-
-  <!-- Tailwind CSS CDN -->
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23e50914'><path d='M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14l-5-5 1.41-1.41L12 14.17l5.59-5.59L19 10l-7 7z'/></svg>" />
   <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            surface: {
-              DEFAULT: '#12161f',
-              elevated: '#181d28',
-              border: 'rgba(255, 255, 255, 0.08)',
-            }
-          }
-        }
-      }
-    }
-  </script>
-
-  <!-- External Libraries -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tailwindcss/typography@0.5.10/dist/typography.min.css" />
   <link rel="stylesheet" href="css/style.css" />
 </head>
-<body class="bg-[#0a0c10] text-[#f3f4f6] min-h-screen flex flex-col selection:bg-white selection:text-black relative bg-grid">
 
-  <!-- Minimal Clean Header (Inspired by Enode & Origin) -->
-  <header class="border-b border-white/[0.06] bg-[#0a0c10]/80 backdrop-blur-md sticky top-0 z-40">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
-      
-      <!-- Brand Logo & Clean Badge -->
-      <div class="flex items-center gap-3">
-        <div class="w-8 h-8 rounded-lg bg-white flex items-center justify-center text-black font-extrabold text-sm tracking-tight">
+<body class="min-h-screen flex flex-col relative selection:bg-[#e50914] selection:text-white">
+
+    <header
+    class="border-b border-[var(--border)] bg-[var(--bg-app)]/85 backdrop-blur-xl sticky top-0 z-40 transition-colors duration-200">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+
+            <a href="index.html" class="flex items-center gap-2.5 group cursor-pointer">
+        <div
+          class="w-7 h-7 rounded-lg bg-[#e50914] flex items-center justify-center text-white font-black text-xs shadow-md shadow-[#e50914]/30 group-hover:scale-105 transition-transform">
           O
         </div>
-        <span class="text-sm font-semibold tracking-tight text-white">OmniConvert</span>
-        <span class="text-[11px] font-mono px-2 py-0.5 rounded-full bg-white/[0.05] border border-white/[0.08] text-slate-400 hidden sm:inline">
-          Local / No Uploads
+        <span class="text-sm font-bold tracking-tight">OmniConvert</span>
+        <span
+          class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[var(--pill-bg)] border border-[var(--border)] text-[var(--text-muted)] hidden sm:inline">
+          Local Sandbox
         </span>
-      </div>
+      </a>
 
-      <!-- Right Action Links -->
-      <div class="flex items-center gap-3">
-        <a href="https://github.com/Vivek-k001/OmniConvert" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 rounded-lg border border-white/[0.08] hover:border-white/20 hover:bg-white/[0.03] text-xs text-slate-300 font-medium transition flex items-center gap-2">
-          <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-          <span>GitHub</span>
+            <div class="flex items-center gap-2.5">
+        <button id="theme-toggle-btn"
+          class="p-2 rounded-xl btn-ios-secondary flex items-center justify-center text-[var(--text-main)] transition"
+          title="Toggle Light / Dark Mode">
+          <svg class="w-4 h-4 hidden dark:block text-amber-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+          </svg>
+          <svg class="w-4 h-4 block dark:hidden text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+          </svg>
+        </button>
+
+        <a href="https://github.com/Vivek-k001/OmniConvert" target="_blank" rel="noopener noreferrer"
+          class="px-3 py-1.5 rounded-xl btn-ios-secondary text-xs font-medium flex items-center gap-1.5 transition">
+          <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+            <path
+              d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
+          </svg>
+          <span class="hidden sm:inline">GitHub</span>
         </a>
       </div>
 
     </div>
   </header>
 
-  <!-- Clean Minimal Hero -->
-  <section class="max-w-4xl mx-auto px-4 pt-10 pb-6 text-center">
-    <h1 class="text-2xl sm:text-3xl font-semibold tracking-tight text-white">
-      Fast, private file conversions in your browser
-    </h1>
-    <p class="mt-2 text-sm text-slate-400 max-w-lg mx-auto">
-      Convert photos to PDF, optimize images, or rasterize vectors. Files stay completely on your device.
-    </p>
+    <main class="max-w-5xl mx-auto px-4 sm:px-6 py-8 flex-1 w-full">
 
-    <!-- Segmented Segment Control (Like TakeControl / Enode) -->
-    <div class="mt-6 inline-flex p-1 rounded-full bg-[#131720] border border-white/[0.08] gap-1">
-      <button data-tab="img-pdf" class="nav-tab-btn tab-pill px-4 py-1.5 active">
-        Images to PDF
-      </button>
-      <button data-tab="compress" class="nav-tab-btn tab-pill px-4 py-1.5">
-        Compress & Convert
-      </button>
-      <button data-tab="vector" class="nav-tab-btn tab-pill px-4 py-1.5">
-        SVG to Image
-      </button>
-      <button data-tab="markdown" class="nav-tab-btn tab-pill px-4 py-1.5">
-        Markdown
-      </button>
-    </div>
-  </section>
+    <section class="text-center pt-4 pb-10">
+      <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight">
+        Tools for files, built into your browser
+      </h1>
+      <p class="mt-2.5 text-sm sm:text-base text-[var(--text-muted)] max-w-md mx-auto">
+        No cloud uploads. No waiting queues. 100% private client-side processing.
+      </p>
+    </section>
 
-  <!-- Main Work Area -->
-  <main class="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex-1 w-full">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
 
-    <!-- ========================================== -->
-    <!-- MODULE 1: IMAGE TO PDF -->
-    <!-- ========================================== -->
-    <div id="tab-img-pdf" class="tab-panel">
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
-        <!-- Dropzone & Items (2 Col) -->
-        <div class="lg:col-span-2 space-y-4">
-          <div id="img-pdf-dropzone" class="surface-card rounded-xl p-8 dropzone-border text-center cursor-pointer">
-            <input type="file" id="img-pdf-input" multiple accept="image/*" class="hidden" />
-            <div class="w-10 h-10 rounded-full bg-white/5 border border-white/10 mx-auto flex items-center justify-center text-slate-300">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4"/></svg>
-            </div>
-            <p class="mt-3 text-sm font-medium text-slate-200">
-              Drop images here, or <label for="img-pdf-input" class="text-white underline cursor-pointer hover:text-slate-300">browse</label>
-            </p>
-            <p class="mt-1 text-xs text-slate-500">Supports PNG, JPG, WebP, GIF • Drag pages to reorder</p>
-          </div>
-
-          <!-- Empty State -->
-          <div id="img-pdf-empty" class="surface-card rounded-xl p-10 text-center text-xs text-slate-500">
-            No images queued. Add images to arrange into a PDF.
-          </div>
-
-          <!-- Action bar -->
-          <div id="img-pdf-summary" class="hidden surface-elevated rounded-xl p-3 px-4 flex items-center justify-between text-xs">
-            <span id="img-pdf-count" class="font-mono text-slate-300">0 files</span>
-            <button id="btn-clear-img-pdf" class="text-slate-400 hover:text-rose-400 transition">
-              Clear All
-            </button>
-          </div>
-
-          <!-- Grid Preview -->
-          <div id="img-pdf-preview-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3"></div>
+            <a href="tools/pdf-splitter.html"
+        class="home-tool-card ios-card p-5 cursor-pointer flex items-center gap-4 block">
+        <div
+          class="ios-squircle w-14 h-14 flex-shrink-0 flex items-center justify-center bg-gradient-to-br from-[#ff3b30] via-[#e50914] to-[#990000]">
+          <svg class="w-7 h-7 text-white drop-shadow-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2" />
+          </svg>
         </div>
-
-        <!-- Controls (1 Col) -->
         <div>
-          <div class="surface-card rounded-xl p-5 space-y-4">
-            <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-400">PDF Options</h2>
-
-            <div>
-              <label class="block text-xs text-slate-300 mb-1">Page Format</label>
-              <select id="pdf-page-size" class="minimal-input w-full px-3 py-2 text-xs">
-                <option value="a4" selected>A4 (210 × 297 mm)</option>
-                <option value="letter">US Letter (8.5 × 11 in)</option>
-                <option value="original">Fit Page to Image Size</option>
-              </select>
-            </div>
-
-            <div>
-              <label class="block text-xs text-slate-300 mb-1">Orientation</label>
-              <select id="pdf-orientation" class="minimal-input w-full px-3 py-2 text-xs">
-                <option value="auto" selected>Auto (Based on image ratio)</option>
-                <option value="portrait">Portrait</option>
-                <option value="landscape">Landscape</option>
-              </select>
-            </div>
-
-            <div>
-              <label class="block text-xs text-slate-300 mb-1">Margins</label>
-              <select id="pdf-margin" class="minimal-input w-full px-3 py-2 text-xs">
-                <option value="0">No Margins (Edge-to-edge)</option>
-                <option value="10" selected>10 mm (Compact)</option>
-                <option value="20">20 mm (Standard)</option>
-              </select>
-            </div>
-
-            <div>
-              <label class="block text-xs text-slate-300 mb-1">Scaling Mode</label>
-              <select id="pdf-fit" class="minimal-input w-full px-3 py-2 text-xs">
-                <option value="fit" selected>Fit & Preserve Aspect Ratio</option>
-                <option value="stretch">Fill / Stretch</option>
-              </select>
-            </div>
-
-            <div>
-              <label class="block text-xs text-slate-300 mb-1">Filename</label>
-              <div class="flex items-center">
-                <input type="text" id="pdf-filename" placeholder="untitled-1" class="minimal-input flex-1 px-3 py-2 text-xs font-mono rounded-r-none border-r-0" />
-                <span class="bg-[#090b0e] border border-white/[0.08] px-3 py-2 rounded-r-lg text-xs text-slate-500 font-mono">.pdf</span>
-              </div>
-            </div>
-
-            <button id="btn-convert-img-pdf" class="btn-primary w-full py-2.5 px-4 text-xs flex items-center justify-center gap-2">
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-              Generate & Download PDF
-            </button>
-          </div>
+          <h2 class="text-sm font-bold text-[var(--text-main)]">PDF Split & Extract</h2>
+          <p class="text-xs text-[var(--text-muted)] mt-0.5">Trim, split & extract custom page ranges</p>
         </div>
+      </a>
 
-      </div>
-    </div>
-
-
-    <!-- ========================================== -->
-    <!-- MODULE 2: IMAGE COMPRESSOR -->
-    <!-- ========================================== -->
-    <div id="tab-compress" class="tab-panel hidden">
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
-        <div class="lg:col-span-2 space-y-4">
-          <div id="compress-dropzone" class="surface-card rounded-xl p-8 dropzone-border text-center cursor-pointer">
-            <input type="file" id="compress-input" multiple accept="image/*" class="hidden" />
-            <div class="w-10 h-10 rounded-full bg-white/5 border border-white/10 mx-auto flex items-center justify-center text-slate-300">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
-            </div>
-            <p class="mt-3 text-sm font-medium text-slate-200">
-              Drop images to compress or convert, or <label for="compress-input" class="text-white underline cursor-pointer hover:text-slate-300">browse</label>
-            </p>
-            <p class="mt-1 text-xs text-slate-500">Live preview with byte difference calculation</p>
-          </div>
-
-          <div id="compress-empty" class="surface-card rounded-xl p-10 text-center text-xs text-slate-500">
-            No images queued for compression.
-          </div>
-
-          <div id="compress-summary" class="hidden surface-elevated rounded-xl p-3 px-4 flex items-center justify-between text-xs">
-            <div id="compress-total-stats"></div>
-            <div class="flex items-center gap-2">
-              <button id="btn-download-compress" class="px-3 py-1.5 rounded-lg bg-white text-black hover:bg-slate-200 font-medium transition">
-                Download All
-              </button>
-              <button id="btn-clear-compress" class="text-slate-400 hover:text-rose-400 transition px-2">
-                Clear
-              </button>
-            </div>
-          </div>
-
-          <div id="compress-preview-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3"></div>
+            <a href="tools/image-to-pdf.html"
+        class="home-tool-card ios-card p-5 cursor-pointer flex items-center gap-4 block">
+        <div
+          class="ios-squircle w-14 h-14 flex-shrink-0 flex items-center justify-center bg-gradient-to-br from-[#ff2a34] via-[#e50914] to-[#a0000a]">
+          <svg class="w-7 h-7 text-white drop-shadow-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 3v6h6" />
+          </svg>
         </div>
-
         <div>
-          <div class="surface-card rounded-xl p-5 space-y-4">
-            <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-400">Settings</h2>
-
-            <div>
-              <div class="flex items-center justify-between text-xs text-slate-300 mb-1">
-                <span>Quality Factor</span>
-                <span id="compress-quality-val" class="font-mono text-white">80%</span>
-              </div>
-              <input type="range" id="compress-quality" min="10" max="100" value="80" step="5" class="w-full h-1 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-white" />
-            </div>
-
-            <div>
-              <label class="block text-xs text-slate-300 mb-1">Target Format</label>
-              <select id="compress-format" class="minimal-input w-full px-3 py-2 text-xs">
-                <option value="image/webp" selected>WebP (Efficient & Modern Web)</option>
-                <option value="image/jpeg">JPEG (Standard Photo)</option>
-                <option value="image/png">PNG (Lossless / Transparent)</option>
-              </select>
-              
-              <!-- Educational Note on PNG/WebP -->
-              <p id="compress-format-hint" class="hidden mt-2 p-2 rounded bg-amber-500/10 border border-amber-500/20 text-[11px] text-amber-300 leading-normal"></p>
-            </div>
-
-            <div>
-              <label class="block text-xs text-slate-300 mb-1">Max Bounds (Optional Resize)</label>
-              <select id="compress-max-dim" class="minimal-input w-full px-3 py-2 text-xs">
-                <option value="0" selected>Original Dimensions</option>
-                <option value="2560">2560 px (2K)</option>
-                <option value="1920">1920 px (Full HD)</option>
-                <option value="1280">1280 px (HD)</option>
-                <option value="800">800 px (Thumbnail)</option>
-              </select>
-            </div>
-          </div>
+          <h2 class="text-sm font-bold text-[var(--text-main)]">Images to PDF</h2>
+          <p class="text-xs text-[var(--text-muted)] mt-0.5">Reorder, rotate & compile photos</p>
         </div>
+      </a>
 
-      </div>
-    </div>
-
-
-    <!-- ========================================== -->
-    <!-- MODULE 3: SVG RASTERIZER -->
-    <!-- ========================================== -->
-    <div id="tab-vector" class="tab-panel hidden">
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
-        <div class="lg:col-span-2 space-y-4">
-          <div id="svg-dropzone" class="surface-card rounded-xl p-6 dropzone-border text-center cursor-pointer">
-            <input type="file" id="svg-input" accept=".svg,image/svg+xml" class="hidden" />
-            <p class="text-sm font-medium text-slate-200">Drop an SVG file or <label for="svg-input" class="text-white underline cursor-pointer">browse</label></p>
-            <p class="text-xs text-slate-500 mt-0.5">Vector artwork to pixel raster</p>
-          </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div class="surface-card rounded-xl p-4 flex flex-col">
-              <span class="text-xs font-semibold text-slate-400 mb-2">SVG Code</span>
-              <textarea id="svg-code" rows="7" placeholder="<svg ...>...</svg>" class="minimal-input w-full p-3 text-xs font-mono resize-none flex-1"></textarea>
-            </div>
-
-            <div class="surface-card rounded-xl p-4 flex flex-col">
-              <div class="flex items-center justify-between mb-2">
-                <span class="text-xs font-semibold text-slate-400">Preview</span>
-                <span id="svg-dimensions-info" class="text-[11px] text-slate-500 font-mono">512×512px</span>
-              </div>
-              <div id="svg-preview-box" class="flex-1 min-h-[160px] bg-[#090b0e] rounded-lg border border-white/5 flex items-center justify-center p-3">
-                <span class="text-xs text-slate-600">No SVG loaded</span>
-              </div>
-            </div>
-          </div>
+            <a href="tools/bg-remover.html" class="home-tool-card ios-card p-5 cursor-pointer flex items-center gap-4 block">
+        <div
+          class="ios-squircle w-14 h-14 flex-shrink-0 flex items-center justify-center bg-gradient-to-br from-[#ff2d55] via-[#d10034] to-[#80001d]">
+          <svg class="w-7 h-7 text-white drop-shadow-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M14.121 14.121L19 19m-7-7l7-7m-7 7l-2.879 2.879M12 12L9.121 9.121m0 5.758a3 3 0 10-4.243 4.243 3 3 0 004.243-4.243zm0-5.758a3 3 0 10-4.243-4.243 3 3 0 004.243 4.243z" />
+          </svg>
         </div>
-
         <div>
-          <div class="surface-card rounded-xl p-5 space-y-4">
-            <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-400">Raster Options</h2>
-
-            <div>
-              <label class="block text-xs text-slate-300 mb-1">Scale Multiplier</label>
-              <select id="svg-scale" class="minimal-input w-full px-3 py-2 text-xs">
-                <option value="1" selected>1x (Original)</option>
-                <option value="2">2x (High DPI)</option>
-                <option value="4">4x (Ultra HD)</option>
-                <option value="8">8x (Print Ready)</option>
-              </select>
-            </div>
-
-            <div class="grid grid-cols-2 gap-2">
-              <div>
-                <label class="block text-xs text-slate-300 mb-1">Width (px)</label>
-                <input type="number" id="svg-custom-width" value="512" class="minimal-input w-full px-3 py-2 text-xs font-mono" />
-              </div>
-              <div>
-                <label class="block text-xs text-slate-300 mb-1">Height (px)</label>
-                <input type="number" id="svg-custom-height" value="512" class="minimal-input w-full px-3 py-2 text-xs font-mono" />
-              </div>
-            </div>
-
-            <div>
-              <label class="block text-xs text-slate-300 mb-1">Format</label>
-              <select id="svg-export-format" class="minimal-input w-full px-3 py-2 text-xs">
-                <option value="png" selected>PNG (Transparent)</option>
-                <option value="webp">WebP (Transparent & Compact)</option>
-                <option value="jpeg">JPEG (Solid Background)</option>
-              </select>
-            </div>
-
-            <div class="space-y-2">
-              <label class="flex items-center gap-2 cursor-pointer text-xs text-slate-300">
-                <input type="checkbox" id="svg-transparent-bg" checked class="rounded border-slate-700 bg-slate-900 text-white focus:ring-0 w-3.5 h-3.5" />
-                <span>Transparent Background</span>
-              </label>
-
-              <div class="flex items-center gap-2 text-xs text-slate-400">
-                <span>Color:</span>
-                <input type="color" id="svg-bg-color" value="#ffffff" disabled class="opacity-40 w-6 h-6 rounded border-0 bg-transparent cursor-pointer" />
-              </div>
-            </div>
-
-            <button id="btn-rasterize-svg" class="btn-primary w-full py-2.5 px-4 text-xs flex items-center justify-center gap-2">
-              Rasterize & Download
-            </button>
-          </div>
+          <h2 class="text-sm font-bold text-[var(--text-main)]">Background Remover</h2>
+          <p class="text-xs text-[var(--text-muted)] mt-0.5">In-browser transparent alpha cutout</p>
         </div>
+      </a>
 
-      </div>
+            <a href="tools/video-to-gif.html"
+        class="home-tool-card ios-card p-5 cursor-pointer flex items-center gap-4 block">
+        <div
+          class="ios-squircle w-14 h-14 flex-shrink-0 flex items-center justify-center bg-gradient-to-br from-[#af52de] via-[#8e24aa] to-[#51087e]">
+          <svg class="w-7 h-7 text-white drop-shadow-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+          </svg>
+        </div>
+        <div>
+          <h2 class="text-sm font-bold text-[var(--text-main)]">Video to GIF</h2>
+          <p class="text-xs text-[var(--text-muted)] mt-0.5">Extract video frames into animated GIF</p>
+        </div>
+      </a>
+
+            <a href="tools/ocr-studio.html" class="home-tool-card ios-card p-5 cursor-pointer flex items-center gap-4 block">
+        <div
+          class="ios-squircle w-14 h-14 flex-shrink-0 flex items-center justify-center bg-gradient-to-br from-[#007aff] via-[#0051ba] to-[#002f6c]">
+          <svg class="w-7 h-7 text-white drop-shadow-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+        </div>
+        <div>
+          <h2 class="text-sm font-bold text-[var(--text-main)]">Image OCR Studio</h2>
+          <p class="text-xs text-[var(--text-muted)] mt-0.5">Extract written text from photos & scans</p>
+        </div>
+      </a>
+
+            <a href="tools/icon-generator.html"
+        class="home-tool-card ios-card p-5 cursor-pointer flex items-center gap-4 block">
+        <div
+          class="ios-squircle w-14 h-14 flex-shrink-0 flex items-center justify-center bg-gradient-to-br from-[#34c759] via-[#248a3d] to-[#125824]">
+          <svg class="w-7 h-7 text-white drop-shadow-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+        </div>
+        <div>
+          <h2 class="text-sm font-bold text-[var(--text-main)]">Icon & Favicon Studio</h2>
+          <p class="text-xs text-[var(--text-muted)] mt-0.5">Apple Touch icons & .ico bundles</p>
+        </div>
+      </a>
+
+            <a href="tools/image-compressor.html"
+        class="home-tool-card ios-card p-5 cursor-pointer flex items-center gap-4 block">
+        <div
+          class="ios-squircle w-14 h-14 flex-shrink-0 flex items-center justify-center bg-gradient-to-br from-[#ff9500] via-[#f76a00] to-[#c74c00]">
+          <svg class="w-7 h-7 text-white drop-shadow-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+          </svg>
+        </div>
+        <div>
+          <h2 class="text-sm font-bold text-[var(--text-main)]">Image Optimizer</h2>
+          <p class="text-xs text-[var(--text-muted)] mt-0.5">Compress WebP, JPEG & PNG in-memory</p>
+        </div>
+      </a>
+
+            <a href="tools/svg-rasterizer.html"
+        class="home-tool-card ios-card p-5 cursor-pointer flex items-center gap-4 block">
+        <div
+          class="ios-squircle w-14 h-14 flex-shrink-0 flex items-center justify-center bg-gradient-to-br from-[#5856d6] via-[#4338ca] to-[#312e81]">
+          <svg class="w-7 h-7 text-white drop-shadow-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+          </svg>
+        </div>
+        <div>
+          <h2 class="text-sm font-bold text-[var(--text-main)]">SVG Rasterizer</h2>
+          <p class="text-xs text-[var(--text-muted)] mt-0.5">Export SVGs to 2x, 4x, 8x PNG</p>
+        </div>
+      </a>
+
+            <a href="tools/zip-studio.html" class="home-tool-card ios-card p-5 cursor-pointer flex items-center gap-4 block">
+        <div
+          class="ios-squircle w-14 h-14 flex-shrink-0 flex items-center justify-center bg-gradient-to-br from-[#5ac8fa] via-[#0091d5] to-[#005c8a]">
+          <svg class="w-7 h-7 text-white drop-shadow-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+          </svg>
+        </div>
+        <div>
+          <h2 class="text-sm font-bold text-[var(--text-main)]">ZIP Archive Studio</h2>
+          <p class="text-xs text-[var(--text-muted)] mt-0.5">Bundle files into ZIP with zero upload</p>
+        </div>
+      </a>
+
     </div>
-
-
-    <!-- ========================================== -->
-    <!-- MODULE 4: MARKDOWN TO PDF -->
-    <!-- ========================================== -->
-    <div id="tab-markdown" class="tab-panel hidden">
-      <div class="surface-card rounded-xl p-5 space-y-4">
-        
-        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-white/[0.06] pb-3">
-          <div class="flex items-center gap-2">
-            <input type="text" id="doc-title-input" value="untitled-doc" class="minimal-input px-3 py-1.5 text-xs font-mono w-44" />
-            
-            <label class="btn-secondary px-3 py-1.5 text-xs cursor-pointer flex items-center gap-1.5">
-              <span>Open .md</span>
-              <input type="file" id="md-file-upload" accept=".md,.markdown,.txt" class="hidden" />
-            </label>
-          </div>
-
-          <div class="flex items-center gap-2">
-            <select id="md-theme-select" class="minimal-input px-3 py-1.5 text-xs">
-              <option value="light" selected>Theme: Light</option>
-              <option value="dark">Theme: Dark</option>
-              <option value="sepia">Theme: Sepia</option>
-            </select>
-
-            <button id="btn-export-md-html" class="btn-secondary px-3 py-1.5 text-xs">
-              HTML
-            </button>
-
-            <button id="btn-export-md-pdf" class="btn-primary px-3 py-1.5 text-xs">
-              Export PDF
-            </button>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 min-h-[460px]">
-          <div class="flex flex-col">
-            <textarea id="md-editor-input" class="minimal-input w-full flex-1 p-3 text-xs font-mono resize-none leading-relaxed"></textarea>
-          </div>
-
-          <div class="flex flex-col">
-            <div id="md-preview-pane" class="prose max-w-none p-6 rounded-xl bg-white text-slate-900 flex-1 overflow-y-auto border border-white/10 text-xs"></div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
   </main>
 
-  <!-- Clean Footer -->
-  <footer class="border-t border-white/[0.06] py-6 mt-12 text-xs text-slate-500">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-3">
+    <footer
+    class="border-t border-[var(--border)] py-6 mt-12 text-xs text-[var(--text-dim)] transition-colors duration-200">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-3">
       <div>
-        <span class="text-slate-300 font-medium">OmniConvert</span> — Client-side web utility
+        <span class="font-semibold text-[var(--text-main)]">OmniConvert</span> — In-browser media & file suite
       </div>
       <div>
-        100% In-Browser Execution • MIT License
+        100% In-Browser Execution • Zero Server Telemetry
       </div>
     </div>
   </footer>
 
-  <!-- ========================================== -->
-  <!-- MODAL: FILENAME CONFIRMATION -->
-  <!-- ========================================== -->
-  <div id="filename-confirm-modal" class="fixed inset-0 modal-backdrop z-50 hidden items-center justify-center p-4">
-    <div class="surface-card bg-[#12161f] p-6 rounded-2xl max-w-sm w-full border border-white/10 shadow-2xl space-y-4">
-      <div>
-        <h3 class="text-sm font-semibold text-white">Save document as</h3>
-        <p class="text-xs text-slate-400 mt-1">Would you like to give your PDF a custom filename before downloading?</p>
-      </div>
-
-      <div class="flex items-center">
-        <input type="text" id="modal-filename-input" placeholder="untitled-1" class="minimal-input w-full px-3 py-2 text-xs font-mono rounded-r-none border-r-0" />
-        <span class="bg-[#090b0e] border border-white/[0.08] px-3 py-2 rounded-r-lg text-xs text-slate-500 font-mono">.pdf</span>
-      </div>
-
-      <div class="pt-2 flex items-center justify-end gap-2">
-        <button id="btn-modal-keep-default" class="btn-secondary px-3 py-1.5 text-xs">
-          Keep Untitled
-        </button>
-        <button id="btn-modal-confirm-download" class="btn-primary px-3 py-1.5 text-xs">
-          Save PDF
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Scripts -->
-  <script src="js/modules/image-pdf.js"></script>
-  <script src="js/modules/compressor.js"></script>
-  <script src="js/modules/vector-rasterizer.js"></script>
-  <script src="js/modules/markdown-pdf.js"></script>
   <script src="js/app.js"></script>
 </body>
+
 </html>

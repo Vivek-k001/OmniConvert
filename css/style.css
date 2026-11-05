@@ -1,158 +1,288 @@
-/* Modern Minimalist Aesthetic - Inspired by Enode, Origin Brand & Nudot Studio */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+/* OmniConvert - iOS-Inspired Minimalist Theme with Crimson Red (#e50914) & Light/Dark System */
+@import url('https://fonts.googleapis.com/css2?family=-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Inter",sans-serif&family=JetBrains+Mono:wght@400;500&display=swap');
 
 :root {
-  --bg-primary: #0a0c10;
-  --bg-surface: #12161f;
-  --bg-surface-elevated: #181d28;
-  --border-subtle: rgba(255, 255, 255, 0.07);
-  --border-hover: rgba(255, 255, 255, 0.16);
-  --text-primary: #f3f4f6;
-  --text-secondary: #9ca3af;
-  --text-tertiary: #6b7280;
-  --accent: #ffffff;
-  --accent-contrast: #000000;
+  /* Dark Mode Default */
+  --bg-app: #08090c;
+  --bg-card: rgba(22, 25, 34, 0.75);
+  --bg-card-solid: #151821;
+  --bg-elevated: rgba(30, 35, 48, 0.7);
+  --border: rgba(255, 255, 255, 0.08);
+  --border-focus: rgba(229, 9, 20, 0.5);
+  --text-main: #f5f6f8;
+  --text-muted: #8e95a5;
+  --text-dim: #5c6375;
+  --pill-bg: rgba(255, 255, 255, 0.06);
+  --input-bg: rgba(12, 14, 19, 0.8);
+  --shadow-card: 0 8px 30px rgba(0, 0, 0, 0.4);
+  
+  /* Brand Red sampled directly from reference */
+  --accent-red: #e50914;
+  --accent-red-hover: #f41520;
+  --accent-red-glow: rgba(229, 9, 20, 0.25);
+  --accent-red-subtle: rgba(229, 9, 20, 0.1);
+
+  /* iOS App Icon Superellipse (continuous corner curvature) */
+  --squircle-radius: 22.37%;
+}
+
+html.light {
+  --bg-app: #f4f5f8;
+  --bg-card: rgba(255, 255, 255, 0.85);
+  --bg-card-solid: #ffffff;
+  --bg-elevated: #ffffff;
+  --border: rgba(0, 0, 0, 0.08);
+  --border-focus: rgba(229, 9, 20, 0.5);
+  --text-main: #11141a;
+  --text-muted: #646b7a;
+  --text-dim: #9aa1b0;
+  --pill-bg: rgba(0, 0, 0, 0.05);
+  --input-bg: #f9fafb;
+  --shadow-card: 0 8px 30px rgba(0, 0, 0, 0.06);
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", sans-serif;
+  background-color: var(--bg-app);
+  color: var(--text-main);
+  transition: background-color 0.25s ease, color 0.25s ease;
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
 code, pre, .font-mono {
   font-family: 'JetBrains Mono', monospace;
 }
 
-/* Subtle dot-grid texture */
-.bg-grid {
-  background-size: 28px 28px;
-  background-image: 
-    radial-gradient(circle, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+/* Authentic iOS App Icon Squircle */
+.ios-squircle {
+  position: relative;
+  border-radius: 22%;
+  overflow: hidden;
+  box-shadow: 
+    0 1px 2px rgba(0, 0, 0, 0.12),
+    0 6px 16px rgba(0, 0, 0, 0.2),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.18),
+    inset 0 1px 1px rgba(255, 255, 255, 0.4);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Clean, crisp surface containers */
-.surface-card {
-  background: var(--bg-surface);
-  border: 1px solid var(--border-subtle);
-  border-radius: 14px;
+.ios-squircle::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 50%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0) 100%);
+  pointer-events: none;
+}
+
+/* Home Grid Card Hover */
+.home-tool-card {
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.home-tool-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(229, 9, 20, 0.35);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+}
+
+.home-tool-card:hover .ios-squircle {
+  transform: scale(1.05);
+  box-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.16),
+    0 10px 24px rgba(0, 0, 0, 0.35),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.25),
+    inset 0 1px 2px rgba(255, 255, 255, 0.5);
+}
+
+/* iOS Glass Card */
+.ios-card {
+  background: var(--bg-card);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  box-shadow: var(--shadow-card);
   transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.surface-card:hover {
-  border-color: var(--border-hover);
+.ios-card-inner {
+  background: var(--bg-card-solid);
+  border: 1px solid var(--border);
+  border-radius: 14px;
 }
 
-.surface-elevated {
-  background: var(--bg-surface-elevated);
-  border: 1px solid var(--border-subtle);
-  border-radius: 12px;
+/* iOS Segmented Control (Tabs) */
+.ios-segmented {
+  background: var(--pill-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  border-radius: 9999px;
+  padding: 4px;
 }
 
-/* Minimal inputs */
-.minimal-input {
-  background: #0d1117;
-  border: 1px solid var(--border-subtle);
-  color: #f3f4f6;
-  border-radius: 10px;
-  transition: all 0.18s ease;
-}
-
-.minimal-input:focus {
-  outline: none;
-  border-color: rgba(255, 255, 255, 0.35);
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.2);
-}
-
-/* Modern segmented pill control (like Enode & TakeControl) */
-.tab-pill {
-  color: var(--text-secondary);
+.ios-segment-btn {
   border-radius: 9999px;
   font-size: 0.8125rem;
   font-weight: 500;
+  color: var(--text-muted);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ios-segment-btn:hover {
+  color: var(--text-main);
+}
+
+.ios-segment-btn.active {
+  background: var(--accent-red);
+  color: #ffffff !important;
+  font-weight: 600;
+  box-shadow: 0 4px 14px var(--accent-red-glow);
+}
+
+/* iOS Primary Button */
+.btn-ios-primary {
+  background: var(--accent-red);
+  color: #ffffff;
+  font-weight: 600;
+  border-radius: 12px;
+  transition: all 0.18s ease;
+  box-shadow: 0 4px 14px var(--accent-red-glow);
+}
+
+.btn-ios-primary:hover {
+  background: var(--accent-red-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(229, 9, 20, 0.4);
+}
+
+.btn-ios-primary:active {
+  transform: scale(0.98);
+}
+
+.btn-ios-secondary {
+  background: var(--pill-bg);
+  color: var(--text-main);
+  border: 1px solid var(--border);
+  border-radius: 12px;
   transition: all 0.18s ease;
 }
 
-.tab-pill:hover {
-  color: #ffffff;
+.btn-ios-secondary:hover {
+  border-color: rgba(229, 9, 20, 0.35);
+  background: rgba(229, 9, 20, 0.05);
 }
 
-.tab-pill.active {
+/* iOS Inputs */
+.ios-input {
+  background: var(--input-bg);
+  border: 1px solid var(--border);
+  color: var(--text-main);
+  border-radius: 12px;
+  transition: all 0.18s ease;
+}
+
+.ios-input:focus {
+  outline: none;
+  border-color: var(--accent-red);
+  box-shadow: 0 0 0 3px var(--accent-red-subtle);
+}
+
+/* iOS Toggle Switch */
+.ios-switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+}
+
+.ios-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.ios-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: var(--pill-bg);
+  border: 1px solid var(--border);
+  transition: .3s cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: 24px;
+}
+
+.ios-slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  transition: .3s cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.25);
+}
+
+.ios-switch input:checked + .ios-slider {
+  background-color: var(--accent-red);
+  border-color: var(--accent-red);
+}
+
+.ios-switch input:checked + .ios-slider:before {
+  transform: translateX(20px);
+}
+
+/* iOS Range Slider */
+.ios-range {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  background: var(--pill-bg);
+  border-radius: 9999px;
+  outline: none;
+  border: 1px solid var(--border);
+}
+
+.ios-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
   background: #ffffff;
-  color: #000000;
-  font-weight: 600;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+  transition: transform 0.1s ease;
 }
 
-/* Primary Action Button (Monochrome minimalist high-contrast) */
-.btn-primary {
-  background: #ffffff;
-  color: #000000;
-  font-weight: 600;
-  border-radius: 10px;
-  transition: all 0.15s ease;
+.ios-range::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
 }
 
-.btn-primary:hover {
-  background: #e5e7eb;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 14px rgba(255, 255, 255, 0.12);
-}
-
-.btn-primary:active {
-  transform: translateY(0);
-}
-
-.btn-secondary {
-  background: rgba(255, 255, 255, 0.05);
-  color: #e5e7eb;
-  border: 1px solid var(--border-subtle);
-  border-radius: 10px;
-  transition: all 0.15s ease;
-}
-
-.btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.09);
-  border-color: var(--border-hover);
+.ios-range::-webkit-slider-thumb:active {
+  transform: scale(1.15);
+  box-shadow: 0 0 0 6px var(--accent-red-subtle);
 }
 
 /* Clean Dropzone */
-.dropzone-border {
-  border: 1px dashed rgba(255, 255, 255, 0.14);
+.ios-dropzone {
+  border: 1.5px dashed var(--border);
+  border-radius: 16px;
   transition: all 0.2s ease;
 }
 
-.dropzone-border:hover, .dropzone-border.drag-over {
-  border-color: rgba(255, 255, 255, 0.45);
-  background: rgba(255, 255, 255, 0.02);
+.ios-dropzone:hover, .ios-dropzone.drag-over {
+  border-color: var(--accent-red);
+  background: var(--accent-red-subtle);
 }
 
-/* Scrollbars */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.12);
-  border-radius: 9999px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.25);
-}
-
-/* Sortable items */
-.sortable-ghost {
-  opacity: 0.25;
-  border: 1px dashed #ffffff;
-}
-
-/* Modal Backdrop */
+/* Modal */
 .modal-backdrop {
-  background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(8px);
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Images to PDF Converter — OmniConvert</title>
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23e50914'><path d='M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14l-5-5 1.41-1.41L12 14.17l5.59-5.59L19 10l-7 7z'/></svg>" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="../css/style.css" />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+</head>
+<body class="min-h-screen flex flex-col relative selection:bg-[#e50914] selection:text-white">
+
+    <header class="border-b border-[var(--border)] bg-[var(--bg-app)]/85 backdrop-blur-xl sticky top-0 z-40 transition-colors duration-200">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+      <a href="../index.html" class="flex items-center gap-2 group cursor-pointer text-xs font-semibold text-[var(--text-muted)] hover:text-[var(--text-main)] transition">
+        <svg class="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+        <span>Back to Home</span>
+      </a>
+
+      <div class="flex items-center gap-2.5">
+        <button id="theme-toggle-btn" class="p-2 rounded-xl btn-ios-secondary flex items-center justify-center text-[var(--text-main)] transition" title="Toggle Light / Dark Mode">
+          <svg class="w-4 h-4 hidden dark:block text-amber-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+          <svg class="w-4 h-4 block dark:hidden text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+    <main class="max-w-5xl mx-auto px-4 sm:px-6 py-8 flex-1 w-full">
+    <div class="mb-6">
+      <div class="flex items-center gap-3">
+        <div class="ios-squircle w-11 h-11 flex-shrink-0 flex items-center justify-center bg-gradient-to-br from-[#ff2a34] via-[#e50914] to-[#a0000a]">
+          <svg class="w-5 h-5 text-white drop-shadow-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 3v6h6"/></svg>
+        </div>
+        <div>
+          <h1 class="text-xl font-bold">Images to PDF Converter</h1>
+          <p class="text-xs text-[var(--text-muted)] mt-0.5">Drag to reorder photos, rotate, set margins, and compile high-resolution PDF documents</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div class="lg:col-span-2 space-y-4">
+        <div id="drop-zone" class="ios-card p-8 ios-dropzone text-center cursor-pointer">
+          <input type="file" id="file-input" multiple accept="image/*" class="hidden" />
+          <div class="w-12 h-12 mx-auto rounded-full bg-[var(--pill-bg)] flex items-center justify-center mb-3">
+            <svg class="w-6 h-6 text-[#e50914]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          </div>
+          <p class="text-sm font-semibold">Drop images here, or <label for="file-input" class="text-[#e50914] underline cursor-pointer">browse</label></p>
+          <p class="mt-1 text-xs text-[var(--text-dim)]">Supports JPEG, PNG, WebP, AVIF</p>
+        </div>
+
+        <div id="image-list-container" class="space-y-2">
+          <div id="image-list" class="grid grid-cols-2 sm:grid-cols-3 gap-3"></div>
+          <div id="empty-state" class="ios-card p-8 text-center text-xs text-[var(--text-muted)]">
+            No images queued. Drag photos here to begin.
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="ios-card p-5 space-y-4">
+          <h2 class="text-xs font-bold uppercase tracking-wider text-[var(--text-muted)]">PDF Settings</h2>
+          <div>
+            <label class="block text-xs font-medium text-[var(--text-muted)] mb-1">Page Orientation</label>
+            <select id="pdf-orientation" class="ios-input w-full px-3 py-2 text-xs">
+              <option value="portrait" selected>Portrait</option>
+              <option value="landscape">Landscape</option>
+              <option value="auto">Auto (Match Image)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-[var(--text-muted)] mb-1">Page Size</label>
+            <select id="pdf-size" class="ios-input w-full px-3 py-2 text-xs">
+              <option value="a4" selected>A4 (Standard)</option>
+              <option value="letter">US Letter</option>
+              <option value="fit">Fit Image Exactly</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-[var(--text-muted)] mb-1">Margins</label>
+            <select id="pdf-margin" class="ios-input w-full px-3 py-2 text-xs">
+              <option value="none">No Margin (Full Bleed)</option>
+              <option value="small" selected>Small (10mm)</option>
+              <option value="large">Large (20mm)</option>
+            </select>
+          </div>
+          <div class="pt-2 border-t border-[var(--border)]">
+            <button id="btn-generate-pdf" disabled class="btn-ios-primary w-full py-2.5 px-4 text-xs font-semibold">
+              Generate & Download PDF
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="../js/modules/image-pdf.js"></script>
+  <script src="../js/app.js"></script>
+</body>
+</html>

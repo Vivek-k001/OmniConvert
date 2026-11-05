@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Video to Animated GIF — OmniConvert</title>
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23e50914'><path d='M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14l-5-5 1.41-1.41L12 14.17l5.59-5.59L19 10l-7 7z'/></svg>" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="../css/style.css" />
+
+    <script src="../js/gif-worker-inline.js"></script>
+  <script src="../js/gif.js"></script>
+</head>
+<body class="min-h-screen flex flex-col relative selection:bg-[#e50914] selection:text-white">
+
+    <header class="border-b border-[var(--border)] bg-[var(--bg-app)]/85 backdrop-blur-xl sticky top-0 z-40 transition-colors duration-200">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+      <a href="../index.html" class="flex items-center gap-2 group cursor-pointer text-xs font-semibold text-[var(--text-muted)] hover:text-[var(--text-main)] transition">
+        <svg class="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+        <span>Back to Home</span>
+      </a>
+
+      <div class="flex items-center gap-2.5">
+        <button id="theme-toggle-btn" class="p-2 rounded-xl btn-ios-secondary flex items-center justify-center text-[var(--text-main)] transition" title="Toggle Light / Dark Mode">
+          <svg class="w-4 h-4 hidden dark:block text-amber-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+          <svg class="w-4 h-4 block dark:hidden text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+    <main class="max-w-5xl mx-auto px-4 sm:px-6 py-8 flex-1 w-full">
+    <div class="mb-6">
+      <div class="flex items-center gap-3">
+        <div class="ios-squircle w-11 h-11 flex-shrink-0 flex items-center justify-center bg-gradient-to-br from-[#af52de] via-[#8e24aa] to-[#51087e]">
+          <svg class="w-5 h-5 text-white drop-shadow-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+        </div>
+        <div>
+          <h1 class="text-xl font-bold">Video to Animated GIF</h1>
+          <p class="text-xs text-[var(--text-muted)] mt-0.5">Render animated GIFs directly from video files in your browser</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div class="lg:col-span-2 space-y-4">
+        <div id="gif-dropzone" class="ios-card p-8 ios-dropzone text-center cursor-pointer">
+          <input type="file" id="gif-input" accept="video/*" class="hidden" />
+          <p class="text-sm font-semibold">Drop video clip (.mp4, .webm) or <label for="gif-input" class="text-[#af52de] underline cursor-pointer">browse</label></p>
+          <p class="mt-1 text-xs text-[var(--text-dim)]">Processed 100% in local memory</p>
+        </div>
+        <video id="gif-video-preview" controls class="w-full max-h-80 rounded-2xl border border-[var(--border)] hidden bg-black"></video>
+        <p id="gif-status" class="text-xs font-mono text-[var(--text-muted)]"></p>
+      </div>
+
+      <div>
+        <div class="ios-card p-5 space-y-4">
+          <h2 class="text-xs font-bold uppercase tracking-wider text-[var(--text-muted)]">GIF Settings</h2>
+          <div>
+            <label class="block text-xs font-medium text-[var(--text-muted)] mb-1">Frame Rate (FPS)</label>
+            <select id="gif-fps" class="ios-input w-full px-3 py-2 text-xs">
+              <option value="10" selected>10 FPS (Compact)</option>
+              <option value="15">15 FPS (Smooth)</option>
+              <option value="20">20 FPS (High Quality)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-[var(--text-muted)] mb-1">Resolution Width</label>
+            <select id="gif-width" class="ios-input w-full px-3 py-2 text-xs">
+              <option value="320" selected>320 px (Mobile / Chat)</option>
+              <option value="480">480 px (Medium)</option>
+              <option value="640">640 px (HD Web)</option>
+            </select>
+          </div>
+          <button id="btn-convert-gif" disabled class="btn-ios-primary w-full py-2.5 px-4 text-xs">
+            Generate & Download GIF
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="../js/modules/video-gif.js"></script>
+  <script src="../js/app.js"></script>
+</body>
+</html>
+
